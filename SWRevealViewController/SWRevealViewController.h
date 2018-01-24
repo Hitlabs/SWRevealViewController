@@ -270,6 +270,9 @@ typedef NS_ENUM(NSInteger, SWRevealToggleAnimationType)
 // The rearViewController will still appear full size and blurred behind the navigation bar of its UINavigationController grand parent
 @property (nonatomic) BOOL presentFrontViewHierarchically;
 
+// If YES (default is NO) the front view controller will resize when offset so that all content in the front view is visible.
+@property (nonatomic) BOOL resizeFrontToFitBounds;
+
 // Velocity required for the controller to toggle its state based on a swipe movement, default is 250
 @property (nonatomic) CGFloat quickFlickVelocity;
 

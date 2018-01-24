@@ -123,6 +123,16 @@ static CGFloat scaledValue( CGFloat v1, CGFloat min2, CGFloat max2, CGFloat min1
     return frame;
 }
 
+- (CGRect)resizeToBoundsFrameAdjustment:(CGRect)frame
+{
+    if ( _c.resizeFrontToFitBounds )
+    {
+        CGRect intersection = CGRectIntersection(self.bounds, frame);
+        frame.size.width = intersection.size.width;
+    }
+    return frame;
+}
+
 
 - (void)prepareRearViewForPosition:(FrontViewPosition)newPosition
 {
@@ -197,7 +207,9 @@ static CGFloat scaledValue( CGFloat v1, CGFloat min2, CGFloat max2, CGFloat min1
     [self _layoutRearViewsForLocation:xLocation];
     
     CGRect frame = CGRectMake(xLocation, 0.0f, bounds.size.width, bounds.size.height);
-    _frontView.frame = [self hierarchycalFrameAdjustment:frame];
+    frame = [self hierarchycalFrameAdjustment:frame];
+    frame = [self resizeToBoundsFrameAdjustment:frame];
+    _frontView.frame = frame;
 }
 
 
@@ -217,7 +229,9 @@ static CGFloat scaledValue( CGFloat v1, CGFloat min2, CGFloat max2, CGFloat min1
     
     // set front view frame
     CGRect frame = CGRectMake(xLocation, 0.0f, bounds.size.width, bounds.size.height);
-    _frontView.frame = [self hierarchycalFrameAdjustment:frame];
+    frame = [self hierarchycalFrameAdjustment:frame];
+    frame = [self resizeToBoundsFrameAdjustment:frame];
+    _frontView.frame = frame;
     
     // setup front view shadow path if needed (front view loaded and not removed)
     UIViewController *frontViewController = _c.frontViewController;
@@ -669,6 +683,7 @@ const int FrontViewPositionNone = 0xff;
     _draggableBorderWidth = 0.0f;
     _clipsViewsToBounds = NO;
     _extendsPointInsideHit = NO;
+    _resizeFrontToFitBounds = NO;
 }
 
 
@@ -1760,6 +1775,7 @@ const int FrontViewPositionNone = 0xff;
     [coder encodeDouble:_draggableBorderWidth forKey:@"_draggableBorderWidth"];
     [coder encodeBool:_clipsViewsToBounds forKey:@"_clipsViewsToBounds"];
     [coder encodeBool:_extendsPointInsideHit forKey:@"_extendsPointInsideHit"];
+    [coder encodeBool:_resizeFrontToFitBounds forKey:@"_resizeFrontToFitBounds"];
     
     [coder encodeObject:_rearViewController forKey:@"_rearViewController"];
     [coder encodeObject:_frontViewController forKey:@"_frontViewController"];
@@ -1798,6 +1814,7 @@ const int FrontViewPositionNone = 0xff;
     _draggableBorderWidth = [coder decodeDoubleForKey:@"_draggableBorderWidth"];
     _clipsViewsToBounds = [coder decodeBoolForKey:@"_clipsViewsToBounds"];
     _extendsPointInsideHit = [coder decodeBoolForKey:@"_extendsPointInsideHit"];
+    _resizeFrontToFitBounds = [coder decodeBoolForKey:@"_resizeFrontToFitBounds"];
 
     [self setRearViewController:[coder decodeObjectForKey:@"_rearViewController"]];
     [self setFrontViewController:[coder decodeObjectForKey:@"_frontViewController"]];
